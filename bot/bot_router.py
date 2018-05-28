@@ -27,38 +27,46 @@ telepot.api._onetime_pool_spec = (
         timeout=30
     )
 )
-config = Setting.objects.get()
-specs = Bot.objects.get()
 
-bot = telepot.bot(specs.api_key)
+try:
+    config = Setting.objects.get()
+except Setting.DoesNotExist:
+    config = None
 
-# Secret GUID number to hide our endpoint
-SECRET = "b6f2a100-6263-11e8-adc0-fa7ae01bbebc"
+try:
+    specs = Bot.objects.get()
+except Bot.DoesNotExist:
+    specs = None
 
-# Our URL to serve as the webhook for Telegram
-END_POINT = 'bappa.pythonanywhere.com/bot/prod/hook/{}/'.format(SECRET)
+if config and specs:
+    bot = telepot.bot(specs.api_key)
 
-# bot = telepot.Bot('486245389:AAFwqUcArzLWJsvopZh4lgPll9RU8vVW57M')
+    # Secret GUID number to hide our endpoint
+    SECRET = "b6f2a100-6263-11e8-adc0-fa7ae01bbebc"
 
-webhook = bot.getWebhookInfo()
-if not webhook['url']:
-    print('No WEbhook set')
-    bot.setWebhook(url=settings.END_POINT)
-    # bot.setWebhook(url=END_POINT)
-    print('SEt webhook: {}'.format(settings.END_POINT))
-else:
-    print('Webhook already set.')
-print(bot.getWebhookInfo())
+    # Our URL to serve as the webhook for Telegram
+    END_POINT = 'bappa.pythonanywhere.com/bot/prod/hook/{}/'.format(SECRET)
 
+    # bot = telepot.Bot('486245389:AAFwqUcArzLWJsvopZh4lgPll9RU8vVW57M')
 
-def route(msg):
-    msg = msg['message']
-    content_type, chat_type, chat_id = telepot.glance(msg)
-    print(content_type, chat_type, chat_id)
+    webhook = bot.getWebhookInfo()
+    if not webhook['url']:
+        print('No WEbhook set')
+        bot.setWebhook(url=settings.END_POINT)
+        # bot.setWebhook(url=END_POINT)
+        print('SEt webhook: {}'.format(settings.END_POINT))
+    else:
+        print('Webhook already set.')
+    print(bot.getWebhookInfo())
 
-    if content_type == 'text':
-        bot.sendMessage(chat_id, msg['text'])
-        bot.sendMessage(
-            chat_id,
-            'The end point is {}'.format(settings.END_POINT)
-        )
+    def route(msg):
+        msg = msg['message']
+        content_type, chat_type, chat_id = telepot.glance(msg)
+        print(content_type, chat_type, chat_id)
+
+        if content_type == 'text':
+            bot.sendMessage(chat_id, msg['text'])
+            bot.sendMessage(
+                chat_id,
+                'The end point is {}'.format(settings.END_POINT)
+            )
