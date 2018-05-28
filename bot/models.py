@@ -19,6 +19,7 @@ class Person(models.Model):
     )
     date_joined = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    pending_input = models.BooleanField(default=False)
 
     def __str__(self):
         return self.telegram_id

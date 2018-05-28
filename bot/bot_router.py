@@ -3,7 +3,7 @@ import time
 from django.http import HttpResponse
 from django.conf import settings
 import telepot
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ForceReply
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.models import Person, Referral, Setting, Bot
 import urllib3
 
@@ -59,9 +59,48 @@ def route(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     print(content_type, chat_type, chat_id)
 
-    if content_type == 'text':
-        bot.sendMessage(chat_id, msg['text'])
-        bot.sendMessage(
-            chat_id,
-            'The end point is {}'.format(settings.END_POINT)
-        )
+    if content_type != 'text':
+        return HttpResponse(status=200)
+
+    try:
+        person = Person.objects.get(telegram_id=chat_id)
+    except Person.DoesNotExist:
+        person = Person(telegram_id=chat_id)
+        person.save()
+
+    text = msg['text']
+    if text == '/start':
+        return start(chat_id, person)
+    elif text == '/Generate Referral Link':
+        return generate(chat_id, person)
+    elif text == 'Check Bonus Amount':
+        return check_bonus(chat_id, person)
+    elif text == 'Cancel':
+        return cancel(chat_id, person)
+    else:
+        return start(chat_id, person)
+
+
+def start(chat_id, person):
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text='Generate Referral Link')],
+            [KeyboardButton(text='Check Bonus Amount')],
+            [KeyboardButton(text='Cancel')],
+        ],
+        one_time_keyboard=True
+    )
+    bot.sendMessage(chat_id, config.welcome_text)
+    bot.sendMessage(chat_id, 'Choose an option', reply_markup=keyboard)
+
+
+def generate(chat_id, person):
+    pass
+
+
+def check_bonus(chat_id, person):
+    pass
+
+
+def cancel(chat_id, person):
+    pass
