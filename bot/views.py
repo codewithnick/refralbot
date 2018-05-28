@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Person, Referral, Setting, Bot, ReceivedMessage
 import telepot
+import bot_router
 
 
 @csrf_exempt
@@ -15,24 +16,15 @@ def hook(request):
     Django view to receive POST requests from Telegram,
     Extract the message JSON, and send for further processing.
     '''
-    data = json.loads(request.body.decode('utf-8'))
+    message = json.loads(request.body.decode('utf-8'))
 
-    try:
-        flavour = telepot.flavor(data['message'])
-    except:
-        flavour = telepot.flavor(data['callback_query'])
-
-    mid = data['update_id']
+    mid = message['update_id']
     if ReceivedMessage.objects.filter(message_id=mid).exists():
         return HttpResponse(status=200)
     else:
         rm = ReceivedMessage(message_id=mid)
         rm.save()
-
-    if flavour == 'chat':
-        return chat_router(data['message'])
-
-    return HttpResponse(status=200)
+    return bot_router.route(message)
 
 
 def chat_router(message):
