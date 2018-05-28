@@ -7,6 +7,16 @@ from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.models import Person, Referral, Setting, Bot
 import urllib3
 
+MAIN_MENU = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text='Add Wallet Address')],
+        [KeyboardButton(text='Change Wallet Address')],
+        [KeyboardButton(text='Generate Referral Link')],
+        [KeyboardButton(text='Check Bonus Amount')],
+        [KeyboardButton(text='Cancel')],
+    ],
+    one_time_keyboard=True
+)
 proxy_url = "http://proxy.server:3128"
 telepot.api._pools = {
     'default': urllib3.ProxyManager(
@@ -69,8 +79,16 @@ def route(msg):
         person.save()
 
     text = msg['text']
+    if person.pending_input:
+        # This text is meant to be a user input at some stage.
+        return process_input(chat_id, person, text)
+
     if text == '/start':
         return start(chat_id, person)
+    if text == '/Add Wallet Address':
+        return add_wallet_address(chat_id, person)
+    if text == '/Change Wallet Address':
+        return change_wallet_address(chat_id, person)
     elif text == '/Generate Referral Link':
         return generate(chat_id, person)
     elif text == 'Check Bonus Amount':
@@ -82,16 +100,22 @@ def route(msg):
 
 
 def start(chat_id, person):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text='Generate Referral Link')],
-            [KeyboardButton(text='Check Bonus Amount')],
-            [KeyboardButton(text='Cancel')],
-        ],
-        one_time_keyboard=True
-    )
     bot.sendMessage(chat_id, config.welcome_text)
-    bot.sendMessage(chat_id, 'Choose an option', reply_markup=keyboard)
+    bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+
+
+def add_wallet_address(chat_id, person):
+    msg_enter = 'Please enter a valid wallet address'
+    person.pending_input = True
+    person.current_stage = 1
+    person.save()
+    bot.sendMessage(chat_id, msg_enter)
+
+
+def change_wallet_address(chat_id, person):
+    person.wallet_address = ''
+    person.save()
+    add_wallet_address(chat_id, person)
 
 
 def generate(chat_id, person):
@@ -104,3 +128,34 @@ def check_bonus(chat_id, person):
 
 def cancel(chat_id, person):
     pass
+
+
+def process_input(chat_id, person, text):
+    stage = person.current_stage
+    if stage == 1:
+        return process_wallet_address(chat_id, person, text)
+
+
+def process_wallet_address(chat_id, person, text):
+    msg_success = 'Congrats! I have saved your wallet address.'
+    msg_already_exists = 'You have already supplied a Waller Address.\
+                          You can change it from main menu'
+    msg_invalid_address = 'This wallet address is invalid. Try again:'
+    msg_cancel = "Type 'cancel' or 'exit' to quit."
+    if person.wallet_address:
+        person.pending_input = False
+        person.save()
+        bot.sendMessage(chat_id, msg_already_exists)
+        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    elif len(text) < 50:
+        bot.sendMessage(chat_id, msg_invalid_address)
+        person.pending_input = False
+        person.save()
+        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    else:
+        person.wallet_address = text
+        person.pending_input = False
+        person.save()
+        bot.sendMessage(chat_id, msg_success)
+        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    return HttpResponse(status=200)
