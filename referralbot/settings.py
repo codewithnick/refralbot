@@ -121,6 +121,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Secret GUID number to hide our endpoint
 SECRET = "b6f2a100-6263-11e8-adc0-fa7ae01bbebc"
 
