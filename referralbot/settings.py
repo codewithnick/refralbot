@@ -127,4 +127,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 SECRET = "b6f2a100-6263-11e8-adc0-fa7ae01bbebc"
 
 # Our URL to serve as the webhook for Telegram
-END_POINT = 'bappa.pythonanywhere.com/bot/prod/hook/{}'.format(SECRET)
+END_POINT = 'bappa.pythonanywhere.com/bot/prod/hook/{}/'.format(SECRET)
