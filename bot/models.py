@@ -39,6 +39,7 @@ class Referral(models.Model):
 
 class Setting(SingletonModel):
     max_referral_count = models.IntegerField(default=100)
+    bonus_currency = models.CharField(default='ETH', max_length=50)
     referral_bonus_amount = models.IntegerField(default=500)
     join_bonus_amount = models.IntegerField(default=500)
     welcome_message = models.TextField(

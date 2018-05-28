@@ -1,11 +1,11 @@
-import json
 import time
+import random
+import urllib3
 from django.http import HttpResponse
 from django.conf import settings
 import telepot
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.models import Person, Referral, Setting, Bot
-import urllib3
 
 MAIN_MENU = ReplyKeyboardMarkup(
     keyboard=[
@@ -100,7 +100,15 @@ def route(msg):
 
 
 def start(chat_id, person):
+    if person.bonus_amount == 0:
+        person.bonus_amount += config.join_bonus_amount
+        person.save()
+    msg = 'You have been rewared with {} {}'.format(
+        config.join_bonus_amount,
+        config.bonus_currency
+    )
     bot.sendMessage(chat_id, config.welcome_text)
+    bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
 
 
@@ -119,7 +127,19 @@ def change_wallet_address(chat_id, person):
 
 
 def generate(chat_id, person):
-    pass
+    random_digit = random.randint(100, 999)
+    referral_digit = int(chat_id) - random_digit
+    url = 'bappa.pythonanywhere.com/bot/prod/referral/?join={}'.format(
+        referral_digit)
+    ref = Referral(
+        person=person,
+        url=url
+    )
+    ref.save()
+    msg = 'You referral Link is {}'.format(url)
+    bot.sendMessage(chat_id, msg)
+    time.sleep(2)
+    bot.sendMessage(chat_id, MAIN_MENU)
 
 
 def check_bonus(chat_id, person):
