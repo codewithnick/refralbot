@@ -25,7 +25,7 @@ SECRET_KEY = 's^6-3b7a6m8*z%b%7#m3#!-4_p_zcfe(%szcoab8h0i_d3#ri('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bappa.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
