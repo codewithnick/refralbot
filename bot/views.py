@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Person, Referral, Setting, Bot, ReceivedMessage
 import telepot
-import bot_router
+from . import bot_router
 
 
 @csrf_exempt
@@ -25,7 +25,3 @@ def hook(request):
         rm = ReceivedMessage(message_id=mid)
         rm.save()
     return bot_router.route(message)
-
-
-def chat_router(message):
-    pass
