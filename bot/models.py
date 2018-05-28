@@ -53,7 +53,7 @@ class Setting(SingletonModel):
 
 
 class Bot(SingletonModel):
-    api_keys = models.CharField('API Keys', max_length=100)
+    api_key = models.CharField('API Keys', max_length=100)
     name = models.CharField('Bot Name', max_length=50)
     webhook = models.URLField()
     last_updated = models.DateTimeField(auto_now=True)
