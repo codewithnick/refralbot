@@ -85,11 +85,11 @@ def route(msg):
 
     if text == '/start':
         return start(chat_id, person)
-    if text == '/Add Wallet Address':
+    if text == 'Add Wallet Address':
         return add_wallet_address(chat_id, person)
-    if text == '/Change Wallet Address':
+    if text == 'Change Wallet Address':
         return change_wallet_address(chat_id, person)
-    elif text == '/Generate Referral Link':
+    elif text == 'Generate Referral Link':
         return generate(chat_id, person)
     elif text == 'Check Bonus Amount':
         return check_bonus(chat_id, person)
