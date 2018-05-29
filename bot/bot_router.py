@@ -143,11 +143,24 @@ def generate(chat_id, person):
 
 
 def check_bonus(chat_id, person):
-    pass
+    try:
+        person = Person.objects.get(telegram_id=chat_id)
+        bonus_msg = 'You have {} {} bonus'.format(
+            person.bonus_amount,
+            config.bonus_currency
+        )
+        bot.sendMessage(chat_id, bonus_msg)
+        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+    except Person.DoesNotExist:
+        msg = 'You have no bonus yet.'
+        bot.sendMessage(chat_id, msg)
+        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
 
 
 def cancel(chat_id, person):
-    pass
+    person.pending_input = False
+    person.save()
+    bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
 
 
 def process_input(chat_id, person, text):
