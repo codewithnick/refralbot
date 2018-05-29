@@ -34,7 +34,7 @@ class Referral(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '{}'.format(self.referral_url)
+        return '{}'.format(self.url)
 
 
 class Setting(SingletonModel):

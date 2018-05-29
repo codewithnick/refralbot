@@ -139,7 +139,7 @@ def generate(chat_id, person):
     msg = 'You referral Link is {}'.format(url)
     bot.sendMessage(chat_id, msg)
     time.sleep(2)
-    bot.sendMessage(chat_id, MAIN_MENU)
+    bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
 
 
 def check_bonus(chat_id, person):
