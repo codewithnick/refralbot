@@ -128,7 +128,7 @@ def change_wallet_address(chat_id, person):
 
 def generate(chat_id, person):
     try:
-        referral = Referral.objects.get(eprson=person)
+        referral = Referral.objects.get(person=person)
         msg = 'Your referral link is: {}\n'.format(referral.url)
         bot.sendMessage(chat_id, msg)
         time.sleep(2)
