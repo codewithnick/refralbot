@@ -107,7 +107,7 @@ def start(chat_id, person):
         config.join_bonus_amount,
         config.bonus_currency
     )
-    bot.sendMessage(chat_id, config.welcome_text)
+    bot.sendMessage(chat_id, config.welcome_message)
     bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
 
