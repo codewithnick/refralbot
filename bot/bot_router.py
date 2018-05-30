@@ -103,10 +103,10 @@ def start(chat_id, person):
     if person.bonus_amount == 0:
         person.bonus_amount += config.join_bonus_amount
         person.save()
-    msg = 'You have been rewared with {} {}'.format(
-        config.join_bonus_amount,
-        config.bonus_currency
-    )
+        msg = 'You have been rewared with {} {}'.format(
+            config.join_bonus_amount,
+            config.bonus_currency
+        )
     bot.sendMessage(chat_id, config.welcome_message)
     bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
@@ -137,8 +137,9 @@ def generate(chat_id, person):
     except Referral.DoesNotExist:
         random_digit = random.randint(100, 999)
         referral_digit = int(chat_id) - random_digit
-        url = 'bappa.pythonanywhere.com/bot/prod/referral/?join={}'.format(
-            referral_digit)
+        # url = 'bappa.pythonanywhere.com/bot/prod/referral/?join={}'.format(
+        #     referral_digit)
+        url = 'telegram.me/bottocksbot/?start={}'.format(referral_digit)
         ref = Referral(
             person=person,
             url=url

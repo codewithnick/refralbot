@@ -25,3 +25,7 @@ def hook(request):
         rm = ReceivedMessage(message_id=mid)
         rm.save()
     return bot_router.route(message)
+
+
+def referral(request):
+    pass
