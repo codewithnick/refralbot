@@ -85,9 +85,12 @@ def route(msg):
 
     if text == '/start':
         return start(chat_id, person)
-    if text == 'Add Wallet Address':
+    elif is_deep_linked(text):
+        payload = text.split()[-1]
+        bot.sendMessage(chat_id, 'You sent {}'.format(payload))
+    elif text == 'Add Wallet Address':
         return add_wallet_address(chat_id, person)
-    if text == 'Change Wallet Address':
+    elif text == 'Change Wallet Address':
         return change_wallet_address(chat_id, person)
     elif text == 'Generate Referral Link':
         return generate(chat_id, person)
@@ -97,6 +100,11 @@ def route(msg):
         return cancel(chat_id, person)
     else:
         return start(chat_id, person)
+
+
+def is_deep_linked(text):
+    temp = text.split()
+    return len(temp) == 2 and temp[0] == '\start'
 
 
 def start(chat_id, person):

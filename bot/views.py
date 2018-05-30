@@ -28,4 +28,4 @@ def hook(request):
 
 
 def referral(request):
-    pass
+    return HttpResponse(status=200)
