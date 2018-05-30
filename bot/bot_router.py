@@ -104,7 +104,7 @@ def route(msg):
 
 def is_deep_linked(text):
     temp = text.split()
-    return len(temp) == 2 and temp[0] == '\start'
+    return len(temp) == 2 and text.startswith('/start')
 
 
 def start(chat_id, person):
@@ -115,8 +115,8 @@ def start(chat_id, person):
             config.join_bonus_amount,
             config.bonus_currency
         )
+        bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, config.welcome_message)
-    bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
 
 
