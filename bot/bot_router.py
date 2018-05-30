@@ -86,8 +86,7 @@ def route(msg):
     if text == '/start':
         return start(chat_id, person)
     elif is_deep_linked(text):
-        payload = text.split()[-1]
-        bot.sendMessage(chat_id, 'You sent {}'.format(payload))
+        return referral_signup(chat_id, person, text)
     elif text == 'Add Wallet Address':
         return add_wallet_address(chat_id, person)
     elif text == 'Change Wallet Address':
@@ -118,6 +117,23 @@ def start(chat_id, person):
         bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, config.welcome_message)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+
+
+def referral_signup(chat_id, person, text):
+    try:
+        code = int(text.split()[-1])
+        referrer = Referral.objects.get(code=code)
+    except (ValueError, Referral.DoesNotExist):
+        error_msg = 'Oops! Something looks wrong with that referral link.'
+        bot.sendMessage(chat_id, error_msg)
+        time.sleep(2)
+        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+        return HttpResponse(status=200)
+    referrer.bonus_amount += config.referral_bonus_amount
+    person.referrered_by = referrer
+    referrer.save()
+    person.save()
+    return start(chat_id, person)
 
 
 def add_wallet_address(chat_id, person):
@@ -191,7 +207,7 @@ def process_wallet_address(chat_id, person, text):
     msg_already_exists = 'You have already supplied a Waller Address.\
                           You can change it from main menu'
     msg_invalid_address = 'This wallet address is invalid. Try again:'
-    msg_cancel = "Type 'cancel' or 'exit' to quit."
+    # msg_cancel = "Type 'cancel' or 'exit' to quit."
     if person.wallet_address:
         person.pending_input = False
         person.save()

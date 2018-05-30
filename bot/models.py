@@ -29,6 +29,7 @@ class Person(models.Model):
 class Referral(models.Model):
     person = models.OneToOneField(Person, on_delete=models.CASCADE)
     url = models.URLField(max_length=150)
+    code = models.IntegerField(default=123)
     count = models.IntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
