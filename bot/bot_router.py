@@ -57,6 +57,7 @@ except Setting.DoesNotExist:
 
 try:
     bot_specs = Bot.objects.get()
+    bot_specs.refresh_from_db()
 except Bot.DoesNotExist:
     bot_specs = None
 
