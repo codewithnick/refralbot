@@ -10,13 +10,21 @@ from bot.models import Person, Referral, Setting, Bot
 
 MAIN_MENU = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='Join Group')],
-        [KeyboardButton(text='Set Wallet Address')],
-        [KeyboardButton(text='Set Email Address')],
-        [KeyboardButton(text='Generate Referral Link')],
-        [KeyboardButton(text='Check Bonus Amount')],
-        [KeyboardButton(text='Invest in our ICO')],
-        [KeyboardButton(text='Cancel')],
+        [
+            KeyboardButton(text='Join Group'),
+            KeyboardButton(text='Set Wallet Address')
+        ],
+        [
+            KeyboardButton(text='Set Email Address'),
+            KeyboardButton(text='Referral Link')
+        ],
+        [
+            KeyboardButton(text='Check Bonus Amount'),
+            KeyboardButton(text='Cancel')
+        ],
+        [
+            KeyboardButton(text='Invest in our ICO')
+        ],
     ],
     one_time_keyboard=True,
     resize_keyboard=True
@@ -100,7 +108,7 @@ def route(msg):
         return set_wallet_address(chat_id, person)
     elif text == 'Set Email Address':
         return set_email_address(chat_id, person)
-    elif text == 'Generate Referral Link':
+    elif text == 'Referral Link':
         return generate(chat_id, person)
     elif text == 'Check Bonus Amount':
         return check_bonus(chat_id, person)
@@ -328,7 +336,8 @@ def process_email_address(chat_id, person, text):
 def cancel(chat_id, person):
     person.pending_input = False
     person.save()
-    bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+    bot.sendMessage(
+        chat_id, 'Okay bye! Send a message if you need anything else.')
 
 
 def display_investment_info(chat_id, person):

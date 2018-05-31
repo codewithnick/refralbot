@@ -25,5 +25,5 @@ def hook(request):
     return bot_router.route(message)
 
 
-def referral(request):
-    return HttpResponse(status=200)
+def generate_csv(request):
+    pass
