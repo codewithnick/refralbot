@@ -243,9 +243,9 @@ def generate(chat_id, person):
         referral = Referral.objects.get(person=person)
         msg = 'Your referral link is: {}\n'.format(referral.url)
         bot.sendMessage(chat_id, msg)
-        time.sleep(2)
-        # bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
-        # return
+        time.sleep(4)
+        bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
+        return
     except Referral.DoesNotExist:
         random_digit = random.randint(100, 999)
         referral_digit = int(chat_id) - random_digit
@@ -260,8 +260,8 @@ def generate(chat_id, person):
         ref.save()
         msg = 'You referral Link is {}'.format(url)
         bot.sendMessage(chat_id, msg)
-        # time.sleep(2)
-        # bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
+        time.sleep(5)
+        bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
 
 
 def check_bonus(chat_id, person):
@@ -279,10 +279,17 @@ def check_bonus(chat_id, person):
         # bot.sendMessage(chat_id, config.menu_text,
         #                 reply_markup=MAIN_MENU)
     except Person.DoesNotExist:
-        msg = 'You have no bonus yet.'
-        bot.sendMessage(chat_id, msg)
-        # bot.sendMessage(chat_id, config.menu_text,
-        #                 reply_markup=MAIN_MENU)
+        bonus_msg = 'For joining the channel, you receive {} {}\nWhen another joins the channel via your referral link, you get {} {}\nCurrently you have {} {} bonus'.format(
+            config.join_bonus_amount,
+            config.bonus_currency,
+            config.referral_bonus_amount,
+            config.bonus_currency,
+            0,
+            config.bonus_currency
+        )
+        bot.sendMessage(chat_id, bonus_msg)
+        time.sleep(3)
+        bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
 
 
 def process_input(chat_id, person, text):
@@ -333,8 +340,8 @@ def process_email_address(chat_id, person, text):
                     Please enter a email.'
         bot.sendMessage(chat_id, msg_error)
     bot.sendMessage(chat_id, msg_success)
-    # time.sleep(5)
-    # bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
+    time.sleep(3)
+    bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
 
 
 def cancel(chat_id, person):
