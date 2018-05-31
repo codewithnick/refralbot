@@ -149,6 +149,12 @@ def check_member(chat_id, person):
             ref_obj.count += 1
             referrer.save()
             ref_obj.save()
+            # msg_notif = 'Someone signed up using your referral link: you have received\
+            #             additional bonus {} {}'.format(
+            #     config.referral_bonus_amount,
+            #     config.bonus_currency
+            # )
+            # bot.sendMessage(referrer.chat_id, msg_notif)
         msg_success = 'Congrats! you have received {} {}'.format(
             config.join_bonus_amount,
             config.bonus_currency
