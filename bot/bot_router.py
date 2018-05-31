@@ -19,7 +19,7 @@ MAIN_MENU = ReplyKeyboardMarkup(
             KeyboardButton(text='Referral Link')
         ],
         [
-            KeyboardButton(text='Check Bonus Amount'),
+            KeyboardButton(text='Check Status'),
             KeyboardButton(text='Cancel')
         ],
         [
@@ -110,7 +110,7 @@ def route(msg):
         return set_email_address(chat_id, person)
     elif text == 'Referral Link':
         return generate(chat_id, person)
-    elif text == 'Check Bonus Amount':
+    elif text == 'Check Status':
         return check_bonus(chat_id, person)
     elif text == 'Invest in our ICO':
         return display_investment_info(chat_id, person)

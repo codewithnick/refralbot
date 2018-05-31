@@ -63,6 +63,11 @@ class Setting(SingletonModel):
     welcome_message = models.TextField(
         'Message to display when a user joins the chat.'
     )
+    menu_text = models.TextField(
+        'Message to display whenever the Menu keyboard is sent to user.',
+        blank=True,
+        null=True
+    )
     unavailable_message = models.TextField(
         'Message to display when bot is unavailable.'
     )
