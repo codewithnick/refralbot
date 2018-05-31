@@ -213,11 +213,11 @@ def process_wallet_address(chat_id, person, text):
         person.save()
         bot.sendMessage(chat_id, msg_already_exists)
         bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
-    elif len(text) < 50:
-        bot.sendMessage(chat_id, msg_invalid_address)
-        person.pending_input = False
-        person.save()
-        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    # elif len(text) < 50:
+    #     bot.sendMessage(chat_id, msg_invalid_address)
+    #     person.pending_input = False
+    #     person.save()
+    #     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
     else:
         person.wallet_address = text
         person.pending_input = False
