@@ -60,7 +60,7 @@ try:
 except Bot.DoesNotExist:
     bot_specs = None
 
-if config and specs:
+if config and bot_specs:
     bot = telepot.Bot(bot_specs.api_key)
 
     # bot = telepot.Bot('486245389:AAFwqUcArzLWJsvopZh4lgPll9RU8vVW57M')
