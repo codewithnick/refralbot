@@ -249,22 +249,28 @@ def generate(chat_id, person):
         msg = 'You referral Link is {}'.format(url)
         bot.sendMessage(chat_id, msg)
         time.sleep(2)
-        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
 
 
 def check_bonus(chat_id, person):
     try:
         person = Person.objects.get(telegram_id=chat_id)
-        bonus_msg = 'You have {} {} bonus'.format(
+        bonus_msg = 'For joining the channel, you receive {} {}\n \
+            When another joins the channel via your referral link, you get {} {}\n \
+            Currently you have {} {} bonus'.format(
+            config.join_bonus_amount,
+            config.bonus_currency,
+            config.referral_bonus_amount,
+            config.bonus_currency,
             person.bonus_amount,
             config.bonus_currency
         )
         bot.sendMessage(chat_id, bonus_msg)
-        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
     except Person.DoesNotExist:
         msg = 'You have no bonus yet.'
         bot.sendMessage(chat_id, msg)
-        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
 
 
 def process_input(chat_id, person, text):
