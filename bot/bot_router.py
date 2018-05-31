@@ -3,6 +3,7 @@ import random
 import urllib3
 from django.http import HttpResponse
 from django.conf import settings
+from django.core.exceptions import ValidationError
 import telepot
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.models import Person, Referral, Setting, Bot
@@ -10,8 +11,8 @@ from bot.models import Person, Referral, Setting, Bot
 MAIN_MENU = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text='Join Group')],
-        [KeyboardButton(text='Add Wallet Address')],
-        [KeyboardButton(text='Change Wallet Address')],
+        [KeyboardButton(text='Set Wallet Address')],
+        [KeyboardButton(text='Set Email Address')],
         [KeyboardButton(text='Generate Referral Link')],
         [KeyboardButton(text='Check Bonus Amount')],
         [KeyboardButton(text='Cancel')],
@@ -92,9 +93,9 @@ def route(msg):
         return referral_signup(chat_id, person, text)
     elif text == 'Join Group':
         return send_group_invite(chat_id, person)
-    elif text == 'Add Wallet Address':
-        return add_wallet_address(chat_id, person)
-    elif text == 'Change Wallet Address':
+    elif text == 'Set Wallet Address':
+        return set_wallet_address(chat_id, person)
+    elif text == 'Set Email Address':
         return change_wallet_address(chat_id, person)
     elif text == 'Generate Referral Link':
         return generate(chat_id, person)
@@ -124,7 +125,7 @@ def send_group_invite(chat_id, person):
         resize_keyboard=True
     )
     time.sleep(2)
-    bot.sendMessage(chat_id, reply_markup=options)
+    bot.sendMessage(chat_id, 'Have you joined?', reply_markup=options)
 
 
 def start(chat_id, person):
@@ -157,7 +158,7 @@ def referral_signup(chat_id, person, text):
     return start(chat_id, person)
 
 
-def add_wallet_address(chat_id, person):
+def set_wallet_address(chat_id, person):
     msg_enter = 'Please enter a valid wallet address'
     person.pending_input = True
     person.current_stage = 1
@@ -165,10 +166,18 @@ def add_wallet_address(chat_id, person):
     bot.sendMessage(chat_id, msg_enter)
 
 
+def set_email_address(chat_id, person):
+    msg_enter = 'Please enter your email address:'
+    person.pending_input = True
+    person.current_stage = 2
+    person.save()
+    bot.sendMessage(chat_id, msg_enter)
+
+
 def change_wallet_address(chat_id, person):
     person.wallet_address = ''
     person.save()
-    add_wallet_address(chat_id, person)
+    set_wallet_address(chat_id, person)
 
 
 def generate(chat_id, person):
@@ -221,28 +230,49 @@ def process_input(chat_id, person, text):
     stage = person.current_stage
     if stage == 1:
         return process_wallet_address(chat_id, person, text)
+    elif stage == 2:
+        return process_email_address(chat_id, person, text)
 
 
 def process_wallet_address(chat_id, person, text):
     msg_success = 'Congrats! I have saved your wallet address.'
-    msg_already_exists = 'You have already supplied a Waller Address.\
-                          You can change it from main menu'
-    msg_invalid_address = 'This wallet address is invalid. Try again:'
+    person.wallet_address = text
+    person.pending_input = False
+    person.save()
+    bot.sendMessage(chat_id, msg_success)
+    bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    return HttpResponse(status=200)
+    # msg_already_exists = 'You have already supplied a Waller Address.\
+    #                       You can change it from main menu'
+    # msg_invalid_address = 'This wallet address is invalid. Try again:'
     # msg_cancel = "Type 'cancel' or 'exit' to quit."
-    if person.wallet_address:
-        person.pending_input = False
-        person.save()
-        bot.sendMessage(chat_id, msg_already_exists)
-        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    # if person.wallet_address:
+    #     person.pending_input = False
+    #     person.save()
+    #     bot.sendMessage(chat_id, msg_already_exists)
+    #     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
     # elif len(text) < 50:
     #     bot.sendMessage(chat_id, msg_invalid_address)
     #     person.pending_input = False
     #     person.save()
     #     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
-    else:
-        person.wallet_address = text
+    # else:
+    #     person.wallet_address = text
+    #     person.pending_input = False
+    #     person.save()
+    #     bot.sendMessage(chat_id, msg_success)
+    #     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+
+
+def process_email_address(chat_id, person, text):
+    msg_success = 'Congrats! I have saved your email address'
+    try:
+        person.email = text
         person.pending_input = False
         person.save()
-        bot.sendMessage(chat_id, msg_success)
-        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
-    return HttpResponse(status=200)
+    except ValidationError:
+        msg_error = 'Something looks wrong with this email address.\n \
+                    Please enter a email.'
+        bot.sendMessage(chat_id, msg_error)
+    bot.sendMessage(chat_id, msg_success)
+    bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)

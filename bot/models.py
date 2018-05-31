@@ -8,6 +8,7 @@ class Person(models.Model):
         verbose_name_plural = 'people'
 
     telegram_id = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100, null=True, blank=True)
     wallet_address = models.CharField(max_length=100, null=True, blank=True)
     bonus_amount = models.IntegerField(default=0)
     referred_by = models.ForeignKey(
@@ -17,6 +18,7 @@ class Person(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    channel_member = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     pending_input = models.BooleanField(default=False)
