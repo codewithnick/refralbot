@@ -1,10 +1,8 @@
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Person, Referral, Setting, Bot, ReceivedMessage
-import telepot
+from .models import ReceivedMessage
 from . import bot_router
 
 

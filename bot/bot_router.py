@@ -16,7 +16,8 @@ MAIN_MENU = ReplyKeyboardMarkup(
         [KeyboardButton(text='Check Bonus Amount')],
         [KeyboardButton(text='Cancel')],
     ],
-    one_time_keyboard=True
+    one_time_keyboard=True,
+    resize_keyboard=True
 )
 proxy_url = "http://proxy.server:3128"
 telepot.api._pools = {
@@ -90,7 +91,7 @@ def route(msg):
     elif is_deep_linked(text):
         return referral_signup(chat_id, person, text)
     elif text == 'Join Group':
-        return join_group(chat_id, person)
+        return send_group_invite(chat_id, person)
     elif text == 'Add Wallet Address':
         return add_wallet_address(chat_id, person)
     elif text == 'Change Wallet Address':
@@ -110,8 +111,21 @@ def is_deep_linked(text):
     temp = text.split()
     return len(temp) == 2 and text.startswith('/start')
 
-def join_group(chat_id, text):
-    pass
+
+def send_group_invite(chat_id, person):
+    invite_link = bot.exportChatInviteLink(config.gcid)
+    invite_msg = '{} \n {}'.format(config.gc_invite, invite_link)
+    bot.sendMessage(chat_id, invite_msg)
+    options = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text='Yes I have joined')],
+        ],
+        one_time_keyboard=True,
+        resize_keyboard=True
+    )
+    time.sleep(2)
+    bot.sendMessage(chat_id, reply_markup=options)
+
 
 def start(chat_id, person):
     if person.bonus_amount == 0:
