@@ -93,6 +93,8 @@ def route(msg):
         return referral_signup(chat_id, person, text)
     elif text == 'Join Group':
         return send_group_invite(chat_id, person)
+    elif text == 'Yes I have joined':
+        return check_member(chat_id, person)
     elif text == 'Set Wallet Address':
         return set_wallet_address(chat_id, person)
     elif text == 'Set Email Address':
@@ -121,22 +123,50 @@ def send_group_invite(chat_id, person):
         keyboard=[
             [KeyboardButton(text='Yes I have joined')],
         ],
-        one_time_keyboard=True,
+        one_time_keyboard=False,
         resize_keyboard=True
     )
     time.sleep(2)
     bot.sendMessage(chat_id, 'Have you joined?', reply_markup=options)
 
 
-def start(chat_id, person):
-    if person.bonus_amount == 0:
+def check_member(chat_id, person):
+    try:
+        member = bot.getChatMember(config.gcid, person.telegram_id)
+    except:
+        msg = 'You have not joined the channel yet. Please click the link'
+        bot.sendMessage(chat_id, msg)
+        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+        return
+    if not person.channel_member:
+        person.channel_member = True
         person.bonus_amount += config.join_bonus_amount
         person.save()
-        msg = 'You have been rewared with {} {}'.format(
+        referrer = person.referred_by
+        if referrer:
+            referrer.bonus_amount += config.referral_bonus_amount
+            ref_obj = Referral.objects.get(person=referrer)
+            ref_obj.count += 1
+            referrer.save()
+            ref_obj.save()
+        msg_success = 'Congrats! you have received {} {}'.format(
             config.join_bonus_amount,
             config.bonus_currency
         )
-        bot.sendMessage(chat_id, msg)
+        bot.sendMessage(chat_id, msg_success)
+        time.sleep(3)
+        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+
+
+def start(chat_id, person):
+    # if person.bonus_amount == 0:
+    #     person.bonus_amount += config.join_bonus_amount
+    #     person.save()
+    #     msg = 'You have been rewared with {} {}'.format(
+    #         config.join_bonus_amount,
+    #         config.bonus_currency
+    #     )
+    #     bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, config.welcome_message)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
 
@@ -144,20 +174,18 @@ def start(chat_id, person):
 def referral_signup(chat_id, person, text):
     try:
         code = int(text.split()[-1])
-        referrer = Referral.objects.get(code=code)
+        referral = Referral.objects.get(code=code)
     except (ValueError, Referral.DoesNotExist):
         error_msg = 'Oops! Something looks wrong with that referral link.'
         bot.sendMessage(chat_id, error_msg)
         time.sleep(2)
         bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
         return HttpResponse(status=200)
-    if referrer.count >= config.max_referral_count:
+    if referral.count >= config.max_referral_count:
         bot.sendMessage(chat_id, config.max_referral_message)
         return start(chat_id, person)
-    referrer.bonus_amount += config.referral_bonus_amount
-    referrer.count += 1
-    person.referrered_by = referrer
-    referrer.save()
+    person.referred_by = referral.person
+    # referrer.save()
     person.save()
     return start(chat_id, person)
 
