@@ -267,9 +267,7 @@ def generate(chat_id, person):
 def check_bonus(chat_id, person):
     try:
         person = Person.objects.get(telegram_id=chat_id)
-        bonus_msg = 'For joining the channel, you receive {} {}\n \
-            When another joins the channel via your referral link, you get {} {}\n \
-            Currently you have {} {} bonus'.format(
+        bonus_msg = 'For joining the channel, you receive {} {}\nWhen another joins the channel via your referral link, you get {} {}\nCurrently you have {} {} bonus'.format(
             config.join_bonus_amount,
             config.bonus_currency,
             config.referral_bonus_amount,
