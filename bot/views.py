@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from .models import ReceivedMessage
-from . import bot_router
+# from . import bot_router
 
 
 @csrf_exempt
@@ -22,7 +22,7 @@ def hook(request):
     else:
         rm = ReceivedMessage(message_id=mid)
         rm.save()
-    return bot_router.route(message)
+    return  # bot_router.route(message)
 
 
 def referral(request):

@@ -66,6 +66,10 @@ class Setting(SingletonModel):
     unavailable_message = models.TextField(
         'Message to display when bot is unavailable.'
     )
+    invest_info = models.TextField(
+        'Information on how users can invest in ICO',
+        default='default'
+    )
     max_users = models.IntegerField(default=1000)
     last_updated = models.DateTimeField(auto_now=True)
 

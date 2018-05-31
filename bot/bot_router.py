@@ -15,6 +15,7 @@ MAIN_MENU = ReplyKeyboardMarkup(
         [KeyboardButton(text='Set Email Address')],
         [KeyboardButton(text='Generate Referral Link')],
         [KeyboardButton(text='Check Bonus Amount')],
+        [KeyboardButton(text='Invest in our ICO')],
         [KeyboardButton(text='Cancel')],
     ],
     one_time_keyboard=True,
@@ -103,6 +104,8 @@ def route(msg):
         return generate(chat_id, person)
     elif text == 'Check Bonus Amount':
         return check_bonus(chat_id, person)
+    elif text == 'Invest in our ICO':
+        return display_investment_details(chat_id, person)
     elif text == 'Cancel':
         return cancel(chat_id, person)
     else:
@@ -138,7 +141,12 @@ def check_member(chat_id, person):
         bot.sendMessage(chat_id, msg)
         bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
         return
-    if not person.channel_member:
+    if person.channel_member:
+        msg = 'You have already received bonus for joining the group.'
+        bot.sendMessage(chat_id, msg)
+        time.sleep(3)
+        bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+    else:
         person.channel_member = True
         person.bonus_amount += config.join_bonus_amount
         person.save()
@@ -259,12 +267,6 @@ def check_bonus(chat_id, person):
         bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
 
 
-def cancel(chat_id, person):
-    person.pending_input = False
-    person.save()
-    bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
-
-
 def process_input(chat_id, person, text):
     stage = person.current_stage
     if stage == 1:
@@ -315,3 +317,14 @@ def process_email_address(chat_id, person, text):
         bot.sendMessage(chat_id, msg_error)
     bot.sendMessage(chat_id, msg_success)
     bot.sendMessage(chat_id, 'Choose an option', reply_markup=MAIN_MENU)
+
+
+def cancel(chat_id, person):
+    person.pending_input = False
+    person.save()
+    bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+
+
+def display_investment_info(chat_id, person):
+    # bot.sendMessage(chat_id, )
+    pass
