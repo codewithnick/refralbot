@@ -105,7 +105,7 @@ def route(msg):
     elif text == 'Check Bonus Amount':
         return check_bonus(chat_id, person)
     elif text == 'Invest in our ICO':
-        return display_investment_details(chat_id, person)
+        return display_investment_info(chat_id, person)
     elif text == 'Cancel':
         return cancel(chat_id, person)
     else:
