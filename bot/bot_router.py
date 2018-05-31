@@ -96,7 +96,7 @@ def route(msg):
     elif text == 'Set Wallet Address':
         return set_wallet_address(chat_id, person)
     elif text == 'Set Email Address':
-        return change_wallet_address(chat_id, person)
+        return set_email_address(chat_id, person)
     elif text == 'Generate Referral Link':
         return generate(chat_id, person)
     elif text == 'Check Bonus Amount':
@@ -151,7 +151,11 @@ def referral_signup(chat_id, person, text):
         time.sleep(2)
         bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
         return HttpResponse(status=200)
+    if referrer.count >= config.max_referral_count:
+        bot.sendMessage(chat_id, config.max_referral_message)
+        return start(chat_id, person)
     referrer.bonus_amount += config.referral_bonus_amount
+    referrer.count += 1
     person.referrered_by = referrer
     referrer.save()
     person.save()
