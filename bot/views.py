@@ -67,7 +67,11 @@ def get_row(obj, model_fields):
         #     val = getattr(obj, 'get_%s_display' % field.name)()
         # else:
         val = getattr(obj, field.name)
-        row.append(str(val).encode("utf-8"))
+        if not val:
+            val = ''
+        else:
+            val = str(val)
+        row.append(val)
     return row
 
 
