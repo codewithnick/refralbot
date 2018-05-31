@@ -234,7 +234,8 @@ def generate(chat_id, person):
         url = 'telegram.me/bottocksbot/?start={}'.format(referral_digit)
         ref = Referral(
             person=person,
-            url=url
+            url=url,
+            code=referral_digit
         )
         ref.save()
         msg = 'You referral Link is {}'.format(url)
