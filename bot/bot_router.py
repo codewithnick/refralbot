@@ -9,6 +9,7 @@ from bot.models import Person, Referral, Setting, Bot
 
 MAIN_MENU = ReplyKeyboardMarkup(
     keyboard=[
+        [KeyboardButton(text='Join Group')],
         [KeyboardButton(text='Add Wallet Address')],
         [KeyboardButton(text='Change Wallet Address')],
         [KeyboardButton(text='Generate Referral Link')],
@@ -67,6 +68,7 @@ if config and specs:
 def route(msg):
     msg = msg['message']
     content_type, chat_type, chat_id = telepot.glance(msg)
+    user_id = msg['from']['id']
     print(content_type, chat_type, chat_id)
 
     if content_type != 'text':
@@ -75,7 +77,7 @@ def route(msg):
     try:
         person = Person.objects.get(telegram_id=chat_id)
     except Person.DoesNotExist:
-        person = Person(telegram_id=chat_id)
+        person = Person(telegram_id=user_id)
         person.save()
 
     text = msg['text']
@@ -87,6 +89,8 @@ def route(msg):
         return start(chat_id, person)
     elif is_deep_linked(text):
         return referral_signup(chat_id, person, text)
+    elif text == 'Join Group':
+        return join_group(chat_id, person)
     elif text == 'Add Wallet Address':
         return add_wallet_address(chat_id, person)
     elif text == 'Change Wallet Address':
@@ -98,13 +102,16 @@ def route(msg):
     elif text == 'Cancel':
         return cancel(chat_id, person)
     else:
-        return start(chat_id, person)
+        # return start(chat_id, person)
+        bot.sendMessage(chat_id, '{}'.format(chat_id))
 
 
 def is_deep_linked(text):
     temp = text.split()
     return len(temp) == 2 and text.startswith('/start')
 
+def join_group(chat_id, text):
+    pass
 
 def start(chat_id, person):
     if person.bonus_amount == 0:
