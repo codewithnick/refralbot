@@ -56,12 +56,12 @@ except Setting.DoesNotExist:
     config = None
 
 try:
-    specs = Bot.objects.get()
+    bot_specs = Bot.objects.get()
 except Bot.DoesNotExist:
-    specs = None
+    bot_specs = None
 
 if config and specs:
-    bot = telepot.Bot(specs.api_key)
+    bot = telepot.Bot(bot_specs.api_key)
 
     # bot = telepot.Bot('486245389:AAFwqUcArzLWJsvopZh4lgPll9RU8vVW57M')
 
@@ -249,7 +249,7 @@ def generate(chat_id, person):
         referral_digit = int(chat_id) - random_digit
         # url = 'bappa.pythonanywhere.com/bot/prod/referral/?join={}'.format(
         #     referral_digit)
-        url = 'telegram.me/bottocksbot/?start={}'.format(referral_digit)
+        url = 'telegram.me/{}/?start={}'.format(bot_specs.name, referral_digit)
         ref = Referral(
             person=person,
             url=url,
