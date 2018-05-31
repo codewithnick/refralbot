@@ -147,13 +147,13 @@ def check_member(chat_id, person):
     except:
         msg = 'You have not joined the channel yet. Please click the link'
         bot.sendMessage(chat_id, msg)
-        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
         return
     if person.channel_member:
         msg = 'You have already received bonus for joining the group.'
         bot.sendMessage(chat_id, msg)
         time.sleep(3)
-        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
     else:
         person.channel_member = True
         person.bonus_amount += config.join_bonus_amount
@@ -177,7 +177,7 @@ def check_member(chat_id, person):
         )
         bot.sendMessage(chat_id, msg_success)
         time.sleep(3)
-        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
 
 
 def start(chat_id, person):
@@ -190,7 +190,7 @@ def start(chat_id, person):
     #     )
     #     bot.sendMessage(chat_id, msg)
     bot.sendMessage(chat_id, config.welcome_message)
-    bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
 
 
 def referral_signup(chat_id, person, text):
@@ -257,7 +257,7 @@ def generate(chat_id, person):
         msg = 'You referral Link is {}'.format(url)
         bot.sendMessage(chat_id, msg)
         time.sleep(2)
-        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
 
 
 def check_bonus(chat_id, person):
@@ -274,11 +274,11 @@ def check_bonus(chat_id, person):
             config.bonus_currency
         )
         bot.sendMessage(chat_id, bonus_msg)
-        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
     except Person.DoesNotExist:
         msg = 'You have no bonus yet.'
         bot.sendMessage(chat_id, msg)
-        bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
 
 
 def process_input(chat_id, person, text):
@@ -295,7 +295,7 @@ def process_wallet_address(chat_id, person, text):
     person.pending_input = False
     person.save()
     bot.sendMessage(chat_id, msg_success)
-    bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
     return HttpResponse(status=200)
     # msg_already_exists = 'You have already supplied a Waller Address.\
     #                       You can change it from main menu'
@@ -305,18 +305,18 @@ def process_wallet_address(chat_id, person, text):
     #     person.pending_input = False
     #     person.save()
     #     bot.sendMessage(chat_id, msg_already_exists)
-    #     bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    #     bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
     # elif len(text) < 50:
     #     bot.sendMessage(chat_id, msg_invalid_address)
     #     person.pending_input = False
     #     person.save()
-    #     bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    #     bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
     # else:
     #     person.wallet_address = text
     #     person.pending_input = False
     #     person.save()
     #     bot.sendMessage(chat_id, msg_success)
-    #     bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    #     bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
 
 
 def process_email_address(chat_id, person, text):
@@ -330,7 +330,7 @@ def process_email_address(chat_id, person, text):
                     Please enter a email.'
         bot.sendMessage(chat_id, msg_error)
     bot.sendMessage(chat_id, msg_success)
-    bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
 
 
 def cancel(chat_id, person):
@@ -343,4 +343,4 @@ def cancel(chat_id, person):
 def display_investment_info(chat_id, person):
     bot.sendMessage(chat_id, config.invest_info)
     time.sleep(4)
-    bot.sendMessage(chat_id, 'How can I help?', reply_markup=MAIN_MENU)
+    bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
