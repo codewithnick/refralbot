@@ -137,7 +137,7 @@ def send_group_invite(chat_id, person):
         one_time_keyboard=False,
         resize_keyboard=True
     )
-    time.sleep(2)
+    time.sleep(3)
     bot.sendMessage(chat_id, 'Have you joined?', reply_markup=options)
 
 
@@ -153,9 +153,9 @@ def check_member(chat_id, person):
     if person.channel_member:
         msg = 'You have already received bonus for joining the group.'
         bot.sendMessage(chat_id, msg)
-        time.sleep(3)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # time.sleep(3)
+        # bot.sendMessage(chat_id, config.menu_text,
+        #                 reply_markup=MAIN_MENU)
     else:
         person.channel_member = True
         person.bonus_amount += config.join_bonus_amount
@@ -178,9 +178,9 @@ def check_member(chat_id, person):
             config.bonus_currency
         )
         bot.sendMessage(chat_id, msg_success)
-        time.sleep(3)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # time.sleep(3)
+        # bot.sendMessage(chat_id, config.menu_text,
+        #                 reply_markup=MAIN_MENU)
 
 
 def start(chat_id, person):
@@ -202,9 +202,9 @@ def referral_signup(chat_id, person, text):
     except (ValueError, Referral.DoesNotExist):
         error_msg = 'Oops! Something looks wrong with that referral link.'
         bot.sendMessage(chat_id, error_msg)
-        time.sleep(2)
-        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
-        return HttpResponse(status=200)
+        # time.sleep(2)
+        # bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+        # return HttpResponse(status=200)
     if referral.count >= config.max_referral_count:
         bot.sendMessage(chat_id, config.max_referral_message)
         return start(chat_id, person)
@@ -242,8 +242,8 @@ def generate(chat_id, person):
         msg = 'Your referral link is: {}\n'.format(referral.url)
         bot.sendMessage(chat_id, msg)
         time.sleep(2)
-        bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
-        return
+        # bot.sendMessage(chat_id, reply_markup=MAIN_MENU)
+        # return
     except Referral.DoesNotExist:
         random_digit = random.randint(100, 999)
         referral_digit = int(chat_id) - random_digit
@@ -258,9 +258,8 @@ def generate(chat_id, person):
         ref.save()
         msg = 'You referral Link is {}'.format(url)
         bot.sendMessage(chat_id, msg)
-        time.sleep(2)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # time.sleep(2)
+        # bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
 
 
 def check_bonus(chat_id, person):
@@ -277,13 +276,13 @@ def check_bonus(chat_id, person):
             config.bonus_currency
         )
         bot.sendMessage(chat_id, bonus_msg)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # bot.sendMessage(chat_id, config.menu_text,
+        #                 reply_markup=MAIN_MENU)
     except Person.DoesNotExist:
         msg = 'You have no bonus yet.'
         bot.sendMessage(chat_id, msg)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # bot.sendMessage(chat_id, config.menu_text,
+        #                 reply_markup=MAIN_MENU)
 
 
 def process_input(chat_id, person, text):
@@ -334,15 +333,17 @@ def process_email_address(chat_id, person, text):
                     Please enter a email.'
         bot.sendMessage(chat_id, msg_error)
     bot.sendMessage(chat_id, msg_success)
-    time.sleep(5)
-    bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
+    # time.sleep(5)
+    # bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
 
 
 def cancel(chat_id, person):
     person.pending_input = False
     person.save()
     bot.sendMessage(
-        chat_id, 'Okay bye! Send a message if you need anything else.')
+        chat_id,
+        'Okay bye! Send a message if you need anything else.'
+    )
 
 
 def display_investment_info(chat_id, person):
