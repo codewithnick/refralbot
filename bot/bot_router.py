@@ -52,6 +52,7 @@ telepot.api._onetime_pool_spec = (
 
 try:
     config = Setting.objects.get()
+    config.refresh_from_db()
 except Setting.DoesNotExist:
     config = None
 
@@ -135,7 +136,7 @@ def send_group_invite(chat_id, person):
         keyboard=[
             [KeyboardButton(text='Yes I have joined')],
         ],
-        one_time_keyboard=False,
+        one_time_keyboard=True,
         resize_keyboard=True
     )
     time.sleep(3)
@@ -154,9 +155,9 @@ def check_member(chat_id, person):
     if person.channel_member:
         msg = 'You have already received bonus for joining the group.'
         bot.sendMessage(chat_id, msg)
-        # time.sleep(3)
-        # bot.sendMessage(chat_id, config.menu_text,
-        #                 reply_markup=MAIN_MENU)
+        time.sleep(3)
+        bot.sendMessage(chat_id, config.menu_text,
+                        reply_markup=MAIN_MENU)
     else:
         person.channel_member = True
         person.bonus_amount += config.join_bonus_amount
@@ -179,9 +180,9 @@ def check_member(chat_id, person):
             config.bonus_currency
         )
         bot.sendMessage(chat_id, msg_success)
-        # time.sleep(3)
-        # bot.sendMessage(chat_id, config.menu_text,
-        #                 reply_markup=MAIN_MENU)
+        time.sleep(3)
+        bot.sendMessage(chat_id, config.menu_text,
+                        reply_markup=MAIN_MENU)
 
 
 def start(chat_id, person):
