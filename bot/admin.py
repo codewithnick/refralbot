@@ -8,6 +8,8 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ['telegram_id', 'email', 'bonus_amount', 'channel_member']
     read_only_fields = ['channel_member']
     exclude = ['pending_input', 'current_stage']
+    list_filter = ['date_joined', 'channel_member', 'bonus_amount']
+    search_fields = ['telegram_id', 'email']
 
 
 @admin.register(Referral)

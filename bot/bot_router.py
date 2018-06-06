@@ -4,6 +4,7 @@ import urllib3
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.utils import OperationalError
 import telepot
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 from bot.models import Person, Referral, Setting, Bot
@@ -23,7 +24,7 @@ MAIN_MENU = ReplyKeyboardMarkup(
             KeyboardButton(text='Cancel')
         ],
         [
-            KeyboardButton(text='Invest in our ICO')
+            KeyboardButton(text='Get More Token')
         ],
     ],
     one_time_keyboard=True,
@@ -53,13 +54,13 @@ telepot.api._onetime_pool_spec = (
 try:
     config = Setting.objects.get()
     config.refresh_from_db()
-except Setting.DoesNotExist:
+except (Setting.DoesNotExist, OperationalError):
     config = None
 
 try:
     bot_specs = Bot.objects.get()
     bot_specs.refresh_from_db()
-except Bot.DoesNotExist:
+except (Bot.DoesNotExist, OperationalError):
     bot_specs = None
 
 if config and bot_specs:
@@ -84,7 +85,7 @@ def route(msg):
     user_id = msg['from']['id']
     print(content_type, chat_type, chat_id)
 
-    if content_type != 'text':
+    if content_type != 'text' or msg['chat']['type'] != 'private':
         return HttpResponse(status=200)
 
     try:
@@ -114,7 +115,7 @@ def route(msg):
         return generate(chat_id, person)
     elif text == 'Check Status':
         return check_bonus(chat_id, person)
-    elif text == 'Invest in our ICO':
+    elif text == 'Get More Token':
         return display_investment_info(chat_id, person)
     elif text == 'Cancel':
         return cancel(chat_id, person)
@@ -148,16 +149,14 @@ def check_member(chat_id, person):
         member = bot.getChatMember(config.gcid, person.telegram_id)
     except:
         msg = 'You have not joined the channel yet. Please click the link'
-        bot.sendMessage(chat_id, msg)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # bot.sendMessage(chat_id, msg)
+        bot.sendMessage(chat_id, msg, reply_markup=MAIN_MENU)
         return
     if person.channel_member:
         msg = 'You have already received bonus for joining the group.'
-        bot.sendMessage(chat_id, msg)
-        time.sleep(3)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # bot.sendMessage(chat_id, msg)
+        # time.sleep(3)
+        bot.sendMessage(chat_id, msg, reply_markup=MAIN_MENU)
     else:
         person.channel_member = True
         person.bonus_amount += config.join_bonus_amount
@@ -179,10 +178,9 @@ def check_member(chat_id, person):
             config.join_bonus_amount,
             config.bonus_currency
         )
-        bot.sendMessage(chat_id, msg_success)
-        time.sleep(3)
-        bot.sendMessage(chat_id, config.menu_text,
-                        reply_markup=MAIN_MENU)
+        # bot.sendMessage(chat_id, msg_success)
+        # time.sleep(3)
+        bot.sendMessage(chat_id, msg_success, reply_markup=MAIN_MENU)
 
 
 def start(chat_id, person):
@@ -217,7 +215,7 @@ def referral_signup(chat_id, person, text):
 
 
 def set_wallet_address(chat_id, person):
-    msg_enter = 'Please enter a valid wallet address'
+    msg_enter = 'Please enter a valid Wave wallet address'
     person.pending_input = True
     person.current_stage = 1
     person.save()
@@ -305,7 +303,7 @@ def process_wallet_address(chat_id, person, text):
     person.wallet_address = text
     person.pending_input = False
     person.save()
-    bot.sendMessage(chat_id, msg_success)
+    bot.sendMessage(chat_id, msg_success, reply_markup=MAIN_MENU)
     return HttpResponse(status=200)
     # msg_already_exists = 'You have already supplied a Waller Address.\
     #                       You can change it from main menu'
@@ -338,10 +336,10 @@ def process_email_address(chat_id, person, text):
     except ValidationError:
         msg_error = 'Something looks wrong with this email address.\n \
                     Please enter a email.'
-        bot.sendMessage(chat_id, msg_error)
-    bot.sendMessage(chat_id, msg_success)
-    time.sleep(3)
-    bot.sendMessage(chat_id, config.menu_text, reply_markup=MAIN_MENU)
+        bot.sendMessage(chat_id, msg_error, reply_markup=MAIN_MENU)
+    # bot.sendMessage(chat_id, msg_success)
+    # time.sleep(3)
+    bot.sendMessage(chat_id, msg_success, reply_markup=MAIN_MENU)
 
 
 def cancel(chat_id, person):
@@ -354,6 +352,5 @@ def cancel(chat_id, person):
 
 
 def display_investment_info(chat_id, person):
-    bot.sendMessage(chat_id, config.invest_info)
-    # time.sleep(5)
-    # bot.sendMessage(chat_id, '', reply_markup=MAIN_MENU)
+    # bot.sendMessage(chat_id, config.invest_info)
+    bot.sendMessage(chat_id, config.invest_info, reply_markup=MAIN_MENU)
