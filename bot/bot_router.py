@@ -71,7 +71,7 @@ if config and bot_specs:
     webhook = bot.getWebhookInfo()
     if not webhook['url']:
         print('No WEbhook set')
-        bot.setWebhook(url=settings.END_POINT)
+        bot.setWebhook(url=bot_specs.webhook)
         # bot.setWebhook(url=END_POINT)
         print('SEt webhook: {}'.format(settings.END_POINT))
     else:
