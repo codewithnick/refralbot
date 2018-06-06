@@ -76,7 +76,7 @@ if config and bot_specs:
         except:
             print('Error')
         # bot.setWebhook(url=END_POINT)
-        print('SEt webhook: {}'.format(bot_specs.webhok))
+        print('SEt webhook: {}'.format(bot_specs.webhook))
     else:
         print('Webhook already set.')
     print(bot.getWebhookInfo())
