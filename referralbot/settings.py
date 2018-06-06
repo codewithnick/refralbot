@@ -25,7 +25,7 @@ SECRET_KEY = 's^6-3b7a6m8*z%b%7#m3#!-4_p_zcfe(%szcoab8h0i_d3#ri('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['bappa.pythonanywhere.com', '127.0.0.1']
+ALLOWED_HOSTS = ['.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
@@ -125,6 +125,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Secret GUID number to hide our endpoint
 SECRET = "b6f2a100-6263-11e8-adc0-fa7ae01bbebc"
-
-# Our URL to serve as the webhook for Telegram
-END_POINT = 'bappa.pythonanywhere.com/bot/prod/hook/{}/'.format(SECRET)
